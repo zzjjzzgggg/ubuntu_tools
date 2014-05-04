@@ -1,0 +1,2 @@
+#! /bin/bash
+/home/jzzhao/bin/latexmk.pl -pdf -pvc -interaction=nonstopmode ${1:-'Manu'}

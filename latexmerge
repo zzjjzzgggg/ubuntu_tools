@@ -1,0 +1,41 @@
+#! /usr/bin/env python3
+#encoding: utf-8
+
+import time,os,sys,re
+
+rex=re.compile('{(.+)}')
+
+def addFile(inputline, fw, fnm=None, apdx='.tex'):
+	try:
+		print('Parsing:', inputline)
+		if fnm is None:
+			m=rex.search(inputline)
+			if m is None: return
+			pre,ext=os.path.splitext(m.group(1))
+			if ext==apdx: fnm=pre
+			elif ext=='': fnm=pre+apdx
+			else: return
+		with open(fnm) as fr:
+			for l in fr: 
+				if l.find('\\input')==0: addFile(l, fw)
+				else: fw.write(l)
+		fw.write('\n\n')
+	except Exception as e: print(e)
+
+def parseMain(mainfnm):
+	prefix, ext= os.path.splitext(mainfnm)
+	if ext!='.tex' and ext!='':
+		print('Error! Not a tex file! Exit!')
+		return
+	fnm='%s_t%d.tex' % (prefix,int(time.time()))
+	print('Writing to:', fnm)
+	with open(prefix+'.tex') as fr, open(fnm, 'w') as fw:
+		for l in fr:
+			l=l.strip()
+			if l.find('\\input')==0: addFile(l, fw)
+			elif l.find('\\bibliography{')==0: addFile(l, fw, prefix+'.bbl')
+			else: fw.write(l+os.linesep)
+
+if __name__=='__main__':
+	if len(sys.argv)<2: print('Merge several latex files into one file.\nUsage:\n\tlatexmerge XX[.tex]')
+	else: parseMain(sys.argv[1])
