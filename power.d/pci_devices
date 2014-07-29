@@ -1,0 +1,35 @@
+#!/bin/sh
+
+#
+# This script adjusts the power control of a set of PCI devices that
+# prove beneficial to enable power savings
+#
+
+PCI_DEVICES_PM_ENABLE="${PCI_DEVICES_PM_ENABLE:-true}"
+
+set_pci_device()
+{
+	for dev in /sys/bus/pci/devices/* ; do
+		if [ -e $dev/power/control ]; then
+			echo $1 > $dev/power/control
+		fi
+	done
+	# NMI watchdog should be turned off
+	echo 0 > /proc/sys/kernel/nmi_watchdog
+	# Increase the VM write-back timeout
+	echo 6000 > /proc/sys/vm/dirty_writeback_centisecs
+}
+
+case "$1" in
+	true) # powersaving on
+		[ "$PCI_DEVICES_PM_ENABLE" = true ] && set_pci_device "auto"
+		;;
+	false) # powersaving off
+		[ "$PCI_DEVICES_PM_ENABLE" = true ] && set_pci_device "on"
+		;;
+	*)
+		exit 254
+		;;
+esac
+
+exit 0
