@@ -17,7 +17,7 @@ set_pci_device()
 	# NMI watchdog should be turned off
 	echo 0 > /proc/sys/kernel/nmi_watchdog
 	# Increase the VM write-back timeout
-	echo 6000 > /proc/sys/vm/dirty_writeback_centisecs
+	echo 1500 > /proc/sys/vm/dirty_writeback_centisecs
 }
 
 case "$1" in
