@@ -3,7 +3,12 @@
 
 import time,os,sys,re
 
-rex=re.compile('{(.+)}')
+rex=re.compile('{([^{}]+)}')
+
+def include(l):
+    if l.strip().find('\\input{')==0: return True
+    elif l.strip().find('\\include{')==0: return True
+    return False
 
 def addFile(inputline, fw, fnm=None, apdx='.tex'):
 	try:
@@ -17,7 +22,7 @@ def addFile(inputline, fw, fnm=None, apdx='.tex'):
 			else: return
 		with open(fnm) as fr:
 			for l in fr: 
-				if l.find('\\input')==0: addFile(l, fw)
+				if include(l): addFile(l, fw)
 				else: fw.write(l)
 		fw.write('\n\n')
 	except Exception as e: print(e)
@@ -34,7 +39,7 @@ def parseMain(mainfnm):
 		fw.write('%% Visiting https://github.com/zzjjzzgggg/ubuntu_tools for details.\n')
 		for l in fr:
 			l=l.strip()
-			if l.find('\\input')==0: addFile(l, fw)
+			if include(l): addFile(l, fw)
 			elif l.find('\\bibliography{')==0: addFile(l, fw, prefix+'.bbl')
 			else: fw.write(l+os.linesep)
 
