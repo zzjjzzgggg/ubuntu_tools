@@ -1,0 +1,14 @@
+*-eps-converted-to.pdf
+*.synctex.gz
+*.aux
+*.blg
+*.bbl
+*.fdb_latexmk
+*.fls
+*.log
+*.spl
+*.dvi
+*.out
+*.swp
+*.bak
+*~
