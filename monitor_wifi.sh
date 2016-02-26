@@ -9,7 +9,7 @@ for p in `ps h -o pid -C $what`; do
 done
 
 # source configuration
-. ~/wifi.conf
+. ./wifi.conf
 
 exec 1> /dev/null
 exec 2>> $log
